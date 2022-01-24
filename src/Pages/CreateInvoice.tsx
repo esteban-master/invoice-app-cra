@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const CreateInvoice = () => {
+const CreateInvoice = () => {
   return (
     <div>
       <h1>Crear Invoice</h1>
@@ -8,3 +8,5 @@ export const CreateInvoice = () => {
     </div>
   );
 };
+
+export default CreateInvoice;

@@ -5,7 +5,8 @@ import { Home } from "../Pages/Home";
 import invoicesData from "../data";
 import userEvent from "@testing-library/user-event";
 import { Layout } from "../components/Layout";
-import { CreateInvoice } from "../Pages/CreateInvoice";
+import CreateInvoice from "../Pages/CreateInvoice";
+import React from "react";
 
 describe("Home Page", () => {
   it("Ir hacia pagina de crear invoice", async () => {
@@ -15,7 +16,14 @@ describe("Home Page", () => {
           <Routes>
             <Route element={<Layout />}>
               <Route index element={<Home />} />
-              <Route path="invoice/new" element={<CreateInvoice />} />
+              <Route
+                path="invoice/new"
+                element={
+                  <React.Suspense fallback={<p>Cargando...</p>}>
+                    <CreateInvoice />
+                  </React.Suspense>
+                }
+              />
             </Route>
           </Routes>
         </MemoryRouter>
