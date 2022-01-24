@@ -1,21 +1,13 @@
 import "./App.css";
-import { TodosProviderContext } from "./TodoExample/TodosContext";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Todos } from "./TodoExample/Todos";
-import { Todo } from "./TodoExample/Todo";
-
+import { InvoicesContextProvider } from "./context/invoiceContext";
+import Router from "./Routes";
+import invoicesData from "./data";
 function App() {
   return (
     <div className="App">
-      <TodosProviderContext>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Todos />}>
-              <Route path=":id" element={<Todo />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </TodosProviderContext>
+      <InvoicesContextProvider invoicesData={invoicesData}>
+        <Router />
+      </InvoicesContextProvider>
     </div>
   );
 }
