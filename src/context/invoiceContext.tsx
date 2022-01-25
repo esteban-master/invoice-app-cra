@@ -3,13 +3,14 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import { Filters, Invoice } from "../interfaces";
-
+import axios from "axios";
 export const InvoiceContext = createContext<null | {
-  invoices: Invoice[];
+  invoices: Invoice[] | null;
   filters: Filters[];
   deleteInvoice: (id: string) => void;
   addNewInvoice: (invoice: Invoice) => void;
@@ -19,19 +20,24 @@ export const InvoiceContext = createContext<null | {
 
 type Props = {
   children: ReactNode;
-  invoicesData: Invoice[];
 };
 
-export const InvoicesContextProvider = ({ children, invoicesData }: Props) => {
-  const [invoices, setInvoices] = useState<Invoice[]>(invoicesData);
+export const InvoicesContextProvider = ({ children }: Props) => {
+  const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const [filters, setFilters] = useState<Filters[]>([]);
 
+  useEffect(() => {
+    axios.get("https://api.com/invoices").then((res) => setInvoices(res.data));
+  }, []);
+
   const deleteInvoice = useCallback((id: string) => {
-    setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
+    setInvoices((prev) =>
+      prev ? prev.filter((invoice) => invoice.id !== id) : null
+    );
   }, []);
 
   const addNewInvoice = useCallback((invoice: Invoice) => {
-    setInvoices((prev) => [invoice, ...prev]);
+    setInvoices((prev) => (prev ? [invoice, ...prev] : [invoice]));
   }, []);
 
   const changeFilters = useCallback((filter: Filters) => {
@@ -44,12 +50,14 @@ export const InvoicesContextProvider = ({ children, invoicesData }: Props) => {
 
   const markAsPaid = useCallback((id: string) => {
     setInvoices((prev) =>
-      prev.map((invoice) => {
-        if (invoice.id === id) {
-          return { ...invoice, status: "paid" };
-        }
-        return invoice;
-      })
+      prev
+        ? prev.map((invoice) => {
+            if (invoice.id === id) {
+              return { ...invoice, status: "paid" };
+            }
+            return invoice;
+          })
+        : null
     );
   }, []);
 

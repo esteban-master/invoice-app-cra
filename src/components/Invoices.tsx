@@ -11,8 +11,13 @@ const Invoices = ({ renderItem }: Props) => {
   const { invoices } = useInvoiceContext();
   return (
     <div>
-      {invoices.length > 0 ? (
-        <div>{invoices.map(renderItem)}</div>
+      {!invoices ? (
+        <p>Cargando...</p>
+      ) : invoices.length > 0 ? (
+        <div>
+          <h2> {invoices.length} invoices </h2>
+          {invoices.map(renderItem)}
+        </div>
       ) : (
         <div>
           <img
