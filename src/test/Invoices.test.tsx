@@ -1,14 +1,22 @@
-import { render, screen } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { rest } from "msw";
+import { server } from "../mocks/server";
 import { MemoryRouter } from "react-router-dom";
 import Invoices from "../components/Invoices";
 import { InvoicesContextProvider } from "../context/invoiceContext";
+
 import invoicesData from "../data";
-import { Invoice } from "../interfaces";
 
 describe("Invoices", () => {
-  const setup = (invoicesData: Invoice[]) =>
+  const setup = () =>
     render(
-      <InvoicesContextProvider invoicesData={invoicesData}>
+      <InvoicesContextProvider>
         <MemoryRouter>
           <Invoices
             renderItem={(invoice) => (
@@ -18,18 +26,31 @@ describe("Invoices", () => {
         </MemoryRouter>
       </InvoicesContextProvider>
     );
-  it("Render list invoices", () => {
-    setup(invoicesData);
+  it("Render list invoices", async () => {
+    setup();
 
-    invoicesData.map((invoice) =>
-      expect(screen.getByRole("heading", { name: invoice.clientName }))
+    await waitFor(() =>
+      invoicesData.map((invoice) =>
+        expect(screen.getByRole("heading", { name: invoice.clientName }))
+      )
     );
   });
-  it("Render empty invoices", () => {
-    setup([]);
+  it("Render empty invoices", async () => {
+    server.use(
+      rest.get("https://api.com/invoices", (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json([]));
+      })
+    );
+
+    setup();
+    // Esperar a que se quite el estado de cargando
+    // para seguir realizando tests
+    await waitForElementToBeRemoved(() => screen.queryByText(/cargando.../i));
 
     expect(
-      screen.getByRole("heading", { name: /no hay nada aqui/i })
+      screen.getByRole("heading", {
+        name: /no hay nada aqui/i,
+      })
     ).toBeInTheDocument();
   });
 });
