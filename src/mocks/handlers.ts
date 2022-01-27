@@ -3,10 +3,10 @@ import invoicesData from "../data";
 import { Invoice } from "../interfaces";
 
 export const handlers = [
-  rest.get("https://api.com/invoices", (req, res, ctx) => {
+  rest.get(`${process.env.REACT_APP_API}/invoices`, (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(invoicesData));
   }),
-  rest.post("https://api.com/invoices", (req, res, ctx) => {
+  rest.post(`${process.env.REACT_APP_API}/invoices`, (req, res, ctx) => {
     const values = req.body as Invoice;
 
     const createdAt = new Date(values.createdAt);

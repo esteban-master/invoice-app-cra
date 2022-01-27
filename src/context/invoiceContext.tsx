@@ -9,6 +9,7 @@ import {
 } from "react";
 import { Filters, Invoice } from "../interfaces";
 import axios from "axios";
+import { getInvoices } from "../components/api-invoices";
 export const InvoiceContext = createContext<null | {
   invoices: Invoice[] | null;
   filters: Filters[];
@@ -27,7 +28,7 @@ export const InvoicesContextProvider = ({ children }: Props) => {
   const [filters, setFilters] = useState<Filters[]>([]);
 
   useEffect(() => {
-    axios.get("https://api.com/invoices").then((res) => setInvoices(res.data));
+    getInvoices().then(setInvoices);
   }, []);
 
   const deleteInvoice = useCallback((id: string) => {
