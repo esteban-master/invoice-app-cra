@@ -48,7 +48,7 @@ const schema = Yup.object({
 });
 
 type Props = {
-  submit: (values: any) => void;
+  submit: (values: Omit<Invoice, "id" | "status" | "paymentDue">) => void;
 };
 
 export const FormCreateInvoice = ({ submit }: Props) => {
@@ -67,23 +67,12 @@ export const FormCreateInvoice = ({ submit }: Props) => {
   });
 
   function submitForm(values: Invoice) {
-    const itemsFieldToNumbers = values.items.map((item) => ({
-      name: item.name,
-      price: Number(item.price),
-      quantity: Number(item.quantity),
-      total: Number(item.price) * Number(item.quantity),
-    }));
-    const newInvoice = {
+    submit({
       ...values,
-      items: itemsFieldToNumbers,
-      id: "RT3080",
-      paymentDue: "2021-08-19",
-      status: "paid",
-      total: itemsFieldToNumbers.reduce((acc, item) => {
-        return acc + item.total;
+      total: values.items.reduce((acc, item) => {
+        return acc + Number(item.total);
       }, 0),
-    };
-    submit(newInvoice);
+    });
   }
 
   return (
@@ -128,6 +117,14 @@ export const FormCreateInvoice = ({ submit }: Props) => {
         />
 
         <input aria-label="CreatedAt" type="date" {...register("createdAt")} />
+
+        <select {...register("paymentTerms")}>
+          <option value="1">Next 1 Day</option>
+          <option value="7">Next 7 Day</option>
+          <option value="14">Next 14 Day</option>
+          <option value="30">Next 30 Day</option>
+        </select>
+
         <input aria-label="Description" {...register("description")} />
 
         <hr />

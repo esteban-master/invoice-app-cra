@@ -1,13 +1,45 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FormCreateInvoice } from "../components/FormCreateInvoice";
-import invoicesData from "../data";
+import { InvoicesContextProvider } from "../context/invoiceContext";
+
+const fakeData = {
+  createdAt: "2021-08-18",
+  description: "Re-branding",
+  paymentTerms: 1,
+  clientName: "Jensen Huang",
+  clientEmail: "jensenh@mail.com",
+  senderAddress: {
+    street: "19 Union Terrace",
+    city: "London",
+    postCode: "E1 3EZ",
+    country: "United Kingdom",
+  },
+  clientAddress: {
+    street: "106 Kendell Street",
+    city: "Sharrington",
+    postCode: "NR24 5WQ",
+    country: "United Kingdom",
+  },
+  items: [
+    {
+      name: "Brand Guidelines",
+      quantity: 1,
+      price: 1800.9,
+      total: 1800.9,
+    },
+  ],
+  total: 1800.9,
+};
 
 describe("Form Create Invoice", () => {
   it("Submit with values mock", async () => {
-    const [firstInvoice] = invoicesData;
     const submitMock = jest.fn();
-    render(<FormCreateInvoice submit={submitMock} />);
+    render(
+      <InvoicesContextProvider>
+        <FormCreateInvoice submit={submitMock} />
+      </InvoicesContextProvider>
+    );
     const {
       senderCity,
       senderCountry,
@@ -23,22 +55,26 @@ describe("Form Create Invoice", () => {
       description,
     } = getFields();
 
-    userEvent.type(senderStreet, firstInvoice.senderAddress.street);
-    userEvent.type(senderCity, firstInvoice.senderAddress.city);
-    userEvent.type(senderPostCode, firstInvoice.senderAddress.postCode);
-    userEvent.type(senderCountry, firstInvoice.senderAddress.country);
+    expect(
+      await screen.findByRole("button", { name: "Add new Item" })
+    ).toBeInTheDocument();
 
-    userEvent.type(clientName, firstInvoice.clientName);
-    userEvent.type(clientEmail, firstInvoice.clientEmail);
+    userEvent.type(senderStreet, fakeData.senderAddress.street);
+    userEvent.type(senderCity, fakeData.senderAddress.city);
+    userEvent.type(senderPostCode, fakeData.senderAddress.postCode);
+    userEvent.type(senderCountry, fakeData.senderAddress.country);
 
-    userEvent.type(clientStreet, firstInvoice.clientAddress.street);
-    userEvent.type(clientCity, firstInvoice.clientAddress.city);
-    userEvent.type(clientPostCode, firstInvoice.clientAddress.postCode);
-    userEvent.type(clientCountry, firstInvoice.clientAddress.country);
-    userEvent.type(createdAt, firstInvoice.createdAt);
-    userEvent.type(description, firstInvoice.description);
+    userEvent.type(clientName, fakeData.clientName);
+    userEvent.type(clientEmail, fakeData.clientEmail);
 
-    firstInvoice.items.forEach((item, index) => {
+    userEvent.type(clientStreet, fakeData.clientAddress.street);
+    userEvent.type(clientCity, fakeData.clientAddress.city);
+    userEvent.type(clientPostCode, fakeData.clientAddress.postCode);
+    userEvent.type(clientCountry, fakeData.clientAddress.country);
+    userEvent.type(createdAt, fakeData.createdAt);
+    userEvent.type(description, fakeData.description);
+
+    fakeData.items.forEach((item, index) => {
       userEvent.type(screen.getByLabelText(`item.${index}.name`), item.name);
       userEvent.type(
         screen.getByLabelText(`item.${index}.quantity`),
@@ -50,14 +86,12 @@ describe("Form Create Invoice", () => {
       );
     });
 
-    userEvent.click(
-      screen.getByRole("button", { exact: true, name: "Submit" })
-    );
+    userEvent.click(screen.getByRole("button", { name: "Submit" }));
 
     await waitFor(() => {
       expect(submitMock).toHaveBeenCalledTimes(1);
     });
-    expect(submitMock).toHaveBeenCalledWith({ ...firstInvoice });
+    expect(submitMock).toHaveBeenCalledWith({ ...fakeData });
   });
 });
 
