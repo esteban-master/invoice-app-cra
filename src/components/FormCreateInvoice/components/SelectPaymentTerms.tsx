@@ -1,16 +1,11 @@
-import { Control, UseFormRegister, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { Invoice } from "../../interfaces";
 
-type Props = {
-  control: Control<Invoice>;
-  register: UseFormRegister<Invoice>;
-};
-
-export const SelectPaymentTerms = ({ control, register }: Props) => {
+export const SelectPaymentTerms = () => {
+  const { register, control } = useFormContext();
   const paymentTerms = useWatch({
     control,
     name: "paymentTerms",

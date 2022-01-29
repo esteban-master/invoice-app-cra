@@ -1,11 +1,12 @@
-import { useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { format } from "date-fns";
 import TextField from "@mui/material/TextField";
 import DateAdapter from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
-export const CreatedAt = ({ control, setValue }: any) => {
+export const CreatedAt = () => {
+  const { control, setValue } = useFormContext();
   const createdAt = useWatch({
     control,
     name: "createdAt",

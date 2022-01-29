@@ -1,32 +1,23 @@
-import { useFieldArray, useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-import {
-  Button,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { SelectPaymentTerms } from "./SelectPaymentTerms";
-import { CreatedAt } from "./CreatedAt";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schema } from "./validationSchema";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { SelectPaymentTerms } from "./components/SelectPaymentTerms";
+import { CreatedAt } from "./components/CreatedAt";
 import { Invoice } from "../../interfaces";
-import { TotalInput } from "./TotalInput";
+import { TotalInput } from "./components/TotalInput";
+import { TextInput } from "./components/TextInput";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 type Props = {
   submit: (values: Omit<Invoice, "id" | "status" | "paymentDue">) => void;
 };
 
 export const FormCreateInvoice = ({ submit }: Props) => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<Invoice>({
+  const methods = useForm<Invoice>({
     mode: "onBlur",
     resolver: yupResolver(schema),
     defaultValues: {
@@ -35,7 +26,7 @@ export const FormCreateInvoice = ({ submit }: Props) => {
     },
   });
   const fieldArray = useFieldArray({
-    control,
+    control: methods.control,
     name: "items",
   });
 
@@ -54,156 +45,95 @@ export const FormCreateInvoice = ({ submit }: Props) => {
   }
 
   return (
-    <Stack component={"form"} onSubmit={handleSubmit(submitForm)} spacing={3}>
-      <Typography component={"h2"}>Bill From</Typography>
-      <TextField
-        {...register("senderAddress.street")}
-        variant="outlined"
-        label="Sender Street"
-        helperText={
-          <ErrorMessage errors={errors} name="senderAddress.street" />
-        }
-        error={!!errors.senderAddress?.street}
-      />
-      <Stack spacing={1} direction={"row"} justifyContent="space-between">
-        <TextField
-          {...register("senderAddress.city")}
-          variant="outlined"
-          label="Sender City"
-        />
-
-        <TextField
-          {...register("senderAddress.postCode")}
-          variant="outlined"
-          label="Sender PostCode"
-        />
-        <TextField
-          {...register("senderAddress.country")}
-          variant="outlined"
-          label="Sender Country"
-        />
-      </Stack>
-
-      <Typography component={"h2"}>Bill To</Typography>
-      <TextField
-        {...register("clientName")}
-        variant="outlined"
-        label="Client Name"
-      />
-
-      <TextField
-        {...register("clientEmail")}
-        variant="outlined"
-        type="email"
-        label="Client Email"
-      />
-
-      <TextField
-        {...register("clientAddress.street")}
-        variant="outlined"
-        label="Client Street"
-      />
-
-      <Stack spacing={1} direction={"row"} justifyContent="space-between">
-        <TextField
-          {...register("clientAddress.city")}
-          variant="outlined"
-          label="Client City"
-        />
-        <TextField
-          {...register("clientAddress.postCode")}
-          variant="outlined"
-          label="Client PostCode"
-        />
-        <TextField
-          {...register("clientAddress.country")}
-          variant="outlined"
-          label="Client Country"
-        />
-      </Stack>
-
-      <Stack direction={"row"} justifyContent="space-between">
-        <CreatedAt control={control} setValue={setValue} />
-
-        <SelectPaymentTerms control={control} register={register} />
-      </Stack>
-
-      <TextField
-        label="Description"
-        multiline
-        rows={1}
-        {...register("description")}
-      />
-
-      <Typography variant="h5" component={"h2"}>
-        Item List
-      </Typography>
-
-      <Stack spacing={4}>
-        {fieldArray.fields.map((field, index) => (
-          <Stack key={index} spacing={2}>
-            <TextField
-              {...register(`items.${index}.name`)}
-              variant="outlined"
-              label="Item Name"
-            />
-            <Stack spacing={1} direction={"row"} justifyContent="space-between">
-              <TextField
-                {...register(`items.${index}.quantity`)}
-                type="number"
-                variant="outlined"
-                label="Quantity"
-              />
-              <TextField
-                {...register(`items.${index}.price`)}
-                type="number"
-                variant="outlined"
-                label="Price"
-              />
-
-              <TotalInput
-                index={index}
-                control={control}
-                setValue={setValue}
-                input={() => {
-                  return (
-                    <TextField
-                      {...register(`items.${index}.total`)}
-                      type="number"
-                      disabled
-                      variant="outlined"
-                      label="Total"
-                    />
-                  );
-                }}
-              />
-              <IconButton
-                onClick={() => fieldArray.remove(index)}
-                aria-label={`delete-item-${index}`}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Stack>
-          </Stack>
-        ))}
-      </Stack>
-      <Button
-        onClick={() =>
-          fieldArray.append({
-            name: "",
-            quantity: "",
-            price: "",
-            total: "",
-          })
-        }
-        variant="contained"
+    <FormProvider {...methods}>
+      <Stack
+        component={"form"}
+        onSubmit={methods.handleSubmit(submitForm)}
+        spacing={3}
       >
-        Add new Item
-      </Button>
+        <Typography component={"h2"}>Bill From</Typography>
 
-      <Button variant="contained" type="submit">
-        Submit
-      </Button>
-    </Stack>
+        <TextInput name="senderAddress.street" label="Sender Street" />
+        <Stack spacing={1} direction={"row"} justifyContent="space-between">
+          <TextInput name="senderAddress.city" label="Sender City" />
+          <TextInput name="senderAddress.postCode" label="Sender PostCode" />
+          <TextInput name="senderAddress.country" label="Sender Country" />
+        </Stack>
+
+        <Typography component={"h2"}>Bill To</Typography>
+        <TextInput name="clientName" label="Client Name" />
+        <TextInput name="clientEmail" label="Client Email" />
+        <TextInput name="clientAddress.street" label="Client Street" />
+
+        <Stack spacing={1} direction={"row"} justifyContent="space-between">
+          <TextInput name="clientAddress.city" label="Client City" />
+          <TextInput name="clientAddress.postCode" label="Client PostCode" />
+          <TextInput name="clientAddress.country" label="Client Country" />
+        </Stack>
+
+        <Stack direction={"row"} justifyContent="space-between">
+          <CreatedAt />
+
+          <SelectPaymentTerms />
+        </Stack>
+
+        <TextInput name="description" label="Description" />
+
+        <Typography variant="h5" component={"h2"}>
+          Item List
+        </Typography>
+
+        <Stack spacing={4}>
+          {fieldArray.fields.map((field, index) => (
+            <Stack key={index} spacing={2}>
+              <TextInput name={`items.${index}.name`} label="Item Name" />
+
+              <Stack
+                spacing={1}
+                direction={"row"}
+                justifyContent="space-between"
+              >
+                <TextInput
+                  name={`items.${index}.quantity`}
+                  label="Quantity"
+                  type="number"
+                />
+
+                <TextInput
+                  type="number"
+                  name={`items.${index}.price`}
+                  label="Price"
+                />
+
+                <TotalInput index={index} />
+                <IconButton
+                  onClick={() => fieldArray.remove(index)}
+                  aria-label={`delete-item-${index}`}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+        <Button
+          onClick={() =>
+            fieldArray.append({
+              name: "",
+              quantity: "",
+              price: "",
+              total: "",
+            })
+          }
+          variant="contained"
+        >
+          Add new Item
+        </Button>
+
+        <Button variant="contained" type="submit">
+          Submit
+        </Button>
+      </Stack>
+    </FormProvider>
   );
 };
