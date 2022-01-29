@@ -1,14 +1,17 @@
 import "./App.css";
 import { InvoicesContextProvider } from "./context/invoiceContext";
 import Router from "./Routes";
+import NiceModal from "@ebay/nice-modal-react";
 
 function App() {
   return (
-    <div className="App">
-      <InvoicesContextProvider>
-        <Router />
-      </InvoicesContextProvider>
-    </div>
+    <>
+      <NiceModal.Provider>
+        <InvoicesContextProvider>
+          <Router />
+        </InvoicesContextProvider>
+      </NiceModal.Provider>
+    </>
   );
 }
 
