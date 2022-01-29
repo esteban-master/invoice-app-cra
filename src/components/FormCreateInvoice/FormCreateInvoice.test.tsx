@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FormCreateInvoice } from "../components/FormCreateInvoice";
-import { InvoicesContextProvider } from "../context/invoiceContext";
+import { FormCreateInvoice } from ".";
+import { InvoicesContextProvider } from "../../context/invoiceContext";
 
 const fakeData = {
-  createdAt: "2021-08-18",
+  createdAt: "08/18/2021",
   description: "Re-branding",
   paymentTerms: 1,
   clientName: "Jensen Huang",
@@ -56,7 +56,7 @@ describe("Form Create Invoice", () => {
     } = getFields();
 
     expect(
-      await screen.findByRole("button", { name: "Add new Item" })
+      await screen.findByRole("button", { name: /Add new Item/i })
     ).toBeInTheDocument();
 
     userEvent.type(senderStreet, fakeData.senderAddress.street);
@@ -71,22 +71,21 @@ describe("Form Create Invoice", () => {
     userEvent.type(clientCity, fakeData.clientAddress.city);
     userEvent.type(clientPostCode, fakeData.clientAddress.postCode);
     userEvent.type(clientCountry, fakeData.clientAddress.country);
-    userEvent.type(createdAt, fakeData.createdAt);
+    userEvent.type(createdAt, `{selectall}${fakeData.createdAt}`);
     userEvent.type(description, fakeData.description);
 
+    expect(createdAt).toHaveValue(fakeData.createdAt);
+
     fakeData.items.forEach((item, index) => {
-      userEvent.type(screen.getByLabelText(`item.${index}.name`), item.name);
+      userEvent.type(screen.getByLabelText(/Item Name/i), item.name);
       userEvent.type(
-        screen.getByLabelText(`item.${index}.quantity`),
+        screen.getByLabelText(/Quantity/i),
         item.quantity.toString()
       );
-      userEvent.type(
-        screen.getByLabelText(`item.${index}.price`),
-        item.price.toString()
-      );
+      userEvent.type(screen.getByLabelText(/Price/i), item.price.toString());
     });
 
-    userEvent.click(screen.getByRole("button", { name: "Submit" }));
+    userEvent.click(screen.getByText(/Submit/i));
 
     await waitFor(() => {
       expect(submitMock).toHaveBeenCalledTimes(1);
@@ -107,7 +106,7 @@ function getFields() {
   const clientPostCode = screen.getByLabelText("Client PostCode");
   const clientCountry = screen.getByLabelText("Client Country");
   const createdAt = screen.getByLabelText("CreatedAt");
-  const description = screen.getByLabelText("Description");
+  const description = screen.getByLabelText(/Description/i);
   return {
     senderPostCode,
     senderStreet,
