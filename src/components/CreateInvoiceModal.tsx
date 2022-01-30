@@ -3,9 +3,20 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
 import { FormCreateInvoice } from "./FormCreateInvoice";
+import { createNewInvoice } from "./api-invoices";
+import { Invoice } from "../interfaces";
 
 export const CreateInvoiceModal = NiceModal.create(() => {
   const modal = useModal();
+
+  async function handleSubmit(values: Partial<Invoice>) {
+    createNewInvoice(values).then((res) => {
+      modal.resolve(res);
+      modal.hide();
+      modal.remove();
+    });
+  }
+
   return (
     <Drawer
       anchor="left"
@@ -25,7 +36,7 @@ export const CreateInvoiceModal = NiceModal.create(() => {
           New Invoice
         </Typography>
 
-        <FormCreateInvoice submit={(values) => console.log(values)} />
+        <FormCreateInvoice submit={handleSubmit} />
       </Stack>
     </Drawer>
   );

@@ -6,12 +6,12 @@ import {
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import { rest } from "msw";
-import { server } from "../mocks/server";
+import { server } from "../../mocks/server";
 import { MemoryRouter } from "react-router-dom";
-import Invoices from "../components/Invoices";
-import { InvoicesContextProvider } from "../context/invoiceContext";
+import Invoices from "./Invoices";
+import { InvoicesContextProvider } from "../../context/invoiceContext";
 
-import invoicesData from "../data";
+import invoicesData from "../../data";
 
 describe("Invoices", () => {
   const setup = () =>

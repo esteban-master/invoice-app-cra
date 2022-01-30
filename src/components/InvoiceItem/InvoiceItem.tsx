@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Invoice } from "../interfaces";
+import { Invoice } from "../../interfaces";
 
 export const InvoiceItem = ({ invoice }: { invoice: Invoice }) => {
   return (

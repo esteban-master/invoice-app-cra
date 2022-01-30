@@ -12,7 +12,7 @@ export const handlers = [
     const createdAt = new Date(values.createdAt);
     const newInvoice = {
       ...values,
-      id: `ID${Math.floor(Math.random() * (1 - 1000) + 1)}`,
+      id: `ID-${invoicesData.length}`,
       paymentDue: new Intl.DateTimeFormat("es-CL").format(
         createdAt.setDate(createdAt.getDate() + values.paymentTerms)
       ),

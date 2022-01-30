@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { useInvoiceContext } from "../context/invoiceContext";
-import { Invoice } from "../interfaces";
-import { InvoiceItem } from "./InvoiceItem";
+import { useInvoiceContext } from "../../context/invoiceContext";
+import { Invoice } from "../../interfaces";
+import { InvoiceItem } from "../InvoiceItem/InvoiceItem";
 
 type Props = {
   renderItem: (invoice: Invoice) => ReactNode;

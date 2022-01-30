@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { InvoiceItem } from "../components/InvoiceItem";
-import dataInvoice from "../data";
+import { InvoiceItem } from "./InvoiceItem";
+import dataInvoice from "../../data";
 
 describe("Invoice Item", () => {
   const [firstInvoice] = dataInvoice;

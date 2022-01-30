@@ -1,7 +1,9 @@
 import { Invoice } from "../interfaces";
 import api from "../config/api";
 
-export async function createNewInvoice(invoice: any): Promise<Invoice> {
+export async function createNewInvoice(
+  invoice: Partial<Invoice>
+): Promise<Invoice> {
   const { data } = await api.post("/invoices", invoice);
   return data;
 }
