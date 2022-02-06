@@ -1,4 +1,5 @@
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { format } from "date-fns";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schema } from "./validationSchema";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,6 +24,7 @@ export const FormCreateInvoice = ({ submit }: Props) => {
     defaultValues: {
       paymentTerms: 1,
       items: [{ name: "", price: "", quantity: "", total: "" }],
+      createdAt: format(new Date(), 'MM/dd/yyyy')
     },
   });
   const fieldArray = useFieldArray({
