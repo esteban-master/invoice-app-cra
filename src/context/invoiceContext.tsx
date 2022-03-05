@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import { Filters, Invoice } from "../interfaces";
-import axios from "axios";
 import { getInvoices } from "../components/api-invoices";
 export const InvoiceContext = createContext<null | {
   invoices: Invoice[] | null;
